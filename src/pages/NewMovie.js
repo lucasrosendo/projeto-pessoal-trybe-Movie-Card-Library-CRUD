@@ -23,7 +23,7 @@ class NewMovie extends Component {
     const { redirect } = this.state;
     const formFilme = (
       <div data-testid="new-movie">
-        <MovieForm onSubmit={ this.handleSubmit } /> {/* passa a função handleSubmit como parametro onSubmit do MovieForm*/}
+        <MovieForm onSubmit={ this.handleSubmit } />
       </div>
     );
 
