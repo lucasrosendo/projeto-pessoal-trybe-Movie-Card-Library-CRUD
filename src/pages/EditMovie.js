@@ -1,52 +1,51 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { MovieForm, Loading } from '../components';
+import { Redirect } from 'react-router-dom';
+import { Loading, MovieForm } from '../components';
 import * as movieAPI from '../services/movieAPI';
 
 class EditMovie extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirect: false,
-      filme: {},
-      loading: true,
+      status: true,
     };
-    this.handleSubmit = this.handleSubmit.bind(this); // faz a função ser vista pelo react
-    this.getMovieData = this.getMovieData.bind(this); // faz a função ser vista pelo react
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() { // faz a função ser invocada imediatamente após um componente ser montado
-    this.getMovieData();
-  }
-
-  async handleSubmit(updatedMovie) { // função que faz o update do filme
-    await movieAPI.updateMovie(updatedMovie); // dentro da api existe essa função..., se quiser saber mais detalhes dessa função, ela está no arquivo movieAPI.js
-    this.setState({
-      redirect: true,
-    });
-  }
-
-  async getMovieData() { // função assíncrona que obtém os recursos do movieAPI
+  componentDidMount() {
     const { match: { params: { id } } } = this.props;
-    const filme = await movieAPI.getMovie(id);// dentro da api existe essa função...,se quiser saber mais detalhes dessa função, ela está no arquivo movieAPI.js
-    this.setState({ // quando ela é invocada ela seta esses estados para mudar de loading para os cards
-      loading: false,
-      filme,
-    });
+    this.fetchMovie(id);
+  }
+
+  async handleSubmit(updatedMovie) {
+    await movieAPI.updateMovie(updatedMovie);
+    this.setState({ shouldRedirect: true });
+  }
+
+  editMovie = (movie) => (
+    <div data-testid="edit-movie" className="edit-movie">
+      <MovieForm movie={ movie } onSubmit={ this.handleSubmit } />
+    </div>
+  )
+
+  fetchMovie = async (id) => {
+    const movie = await movieAPI.getMovie(id);
+    this.setState({ status: 'loading', movie });
   }
 
   render() {
-    const { loading, redirect, filme } = this.state;
-    const formulario = (
-      <div data-testid="edit-movie">
-        <MovieForm movie={ filme } onSubmit={ this.handleSubmit } />
-      </div>
-    );
-    if (redirect) { return <Redirect to="/" />; } // condicionais de display da renderização
-    if (loading) { return <Loading />; }
+    const { status, shouldRedirect, movie } = this.state;
+    if (shouldRedirect) {
+      return <Redirect to="/" />;
+    }
+
+    if (status === 'loading') {
+      return this.editMovie(movie);
+    }
+
     return (
-      formulario
+      <Loading />
     );
   }
 }
@@ -56,7 +55,7 @@ EditMovie.propTypes = {
     params: PropTypes.shape({
       id: PropTypes.string,
     }),
-  }).isRequired,
-};
+  }),
+}.isRequired;
 
 export default EditMovie;
