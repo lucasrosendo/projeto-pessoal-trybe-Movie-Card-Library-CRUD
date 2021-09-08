@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class MovieForm extends React.Component {
+export default class MovieForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = { ...props.movie };
@@ -19,7 +19,6 @@ class MovieForm extends React.Component {
 
   renderTitleInput() {
     const { title } = this.state;
-
     return (
       <div>
         <label htmlFor="movie_title">
@@ -39,7 +38,6 @@ class MovieForm extends React.Component {
 
   renderSubtitleInput() {
     const { subtitle } = this.state;
-
     return (
       <div>
         <label htmlFor="movie_subtitle">
@@ -58,7 +56,6 @@ class MovieForm extends React.Component {
 
   renderImagePathInput() {
     const { imagePath } = this.state;
-
     return (
       <div className="row">
         <label htmlFor="movie_image">
@@ -77,7 +74,6 @@ class MovieForm extends React.Component {
 
   renderStorylineInput() {
     const { storyline } = this.state;
-
     return (
       <div>
         <label htmlFor="movie_storyline">
@@ -163,21 +159,9 @@ class MovieForm extends React.Component {
     );
   }
 }
+
+const { func, arrayOf } = PropTypes;
 MovieForm.propTypes = {
-  movie: PropTypes.objectOf({
-    id: PropTypes.number,
-    title: PropTypes.string,
-    subtitle: PropTypes.string,
-    storyline: PropTypes.string,
-    rating: PropTypes.number,
-    imagePath: PropTypes.string,
-    bookmarked: PropTypes.bool,
-    genre: PropTypes.string,
-  }),
-  onSubmit: PropTypes.func,
-};
-MovieForm.defaultProps = {
-  movie: {},
-  onSubmit: () => {},
-};
-export default MovieForm;
+  onSubmit: func,
+  movie: arrayOf,
+}.isRequired;

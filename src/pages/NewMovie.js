@@ -3,9 +3,10 @@ import { Redirect } from 'react-router-dom';
 import MovieForm from '../components/MovieForm';
 import * as movieAPI from '../services/movieAPI';
 
-class NewMovie extends Component {
+export default class NewMovie extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       redirect: false,
     };
@@ -13,7 +14,7 @@ class NewMovie extends Component {
   }
 
   async handleSubmit(newMovie) {
-    await movieAPI.createMovie(newMovie); // executa a função createMovie da API
+    await movieAPI.createMovie(newMovie);
     this.setState({
       redirect: true,
     });
@@ -21,15 +22,14 @@ class NewMovie extends Component {
 
   render() {
     const { redirect } = this.state;
-    const formFilme = (
+    const movieForm = (
       <div data-testid="new-movie">
         <MovieForm onSubmit={ this.handleSubmit } />
       </div>
     );
 
     return (
-      redirect ? <Redirect to="/" /> : formFilme
+      redirect ? <Redirect to="/" /> : movieForm
     );
   }
 }
-export default NewMovie;

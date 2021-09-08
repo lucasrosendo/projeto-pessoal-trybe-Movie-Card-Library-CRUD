@@ -1,49 +1,38 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
+import { Loading } from '../components';
 import * as movieAPI from '../services/movieAPI';
-import Loading from '../components/Loading';
 
-class MovieList extends Component {
+export default class MovieList extends Component {
   constructor() {
     super();
 
     this.state = {
-      loading: true,
       movies: [],
+      loading: true,
     };
-    this.fetchMovies = this.fetchMovies.bind(this); // faz a função fetchMovies ser vista pelo react
   }
 
-  componentDidMount() { // faz a função ser chamada ao montar os componentes
-    this.fetchMovies();
-  }
-
-  async fetchMovies() { // função assíncrona que faz a requisição na api
-    const filmes = await movieAPI.getMovies();
-    this.setState({
-      loading: false,
-      movies: filmes,
+  componentDidMount() {
+    movieAPI.getMovies().then((result) => {
+      this.setState({
+        movies: result,
+        loading: false,
+      });
     });
   }
 
   render() {
     const { movies, loading } = this.state;
-    const addCard = <Link to="/movies/new">ADICIONAR CARTÃO</Link>;
-
+    if (loading) return <Loading />;
+    // Render Loading here if the request is still happening
     return (
       <div data-testid="movie-list">
-        {loading ? <Loading /> : addCard}
-        {/*
-        o loading tem o estado de false por default e só é trocado quando a função da api
-        é executada no momento dela (assíncrona) quando isso acontece a função muda o estado
-        do loading para falso o que faz renderizar o addCard
-        */}
-        {movies.map((movie) => <MovieCard key={ movie.id } movie={ movie } />)}
-        {/* map padrão para fazer a renderização dos filmes */}
+        <Link to="/movies/new">ADICIONAR CARTÃO</Link>
+        {movies.map((movie) => <MovieCard key={ movie.title } movie={ movie } />)}
       </div>
+
     );
   }
 }
-
-export default MovieList;
